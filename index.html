@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Polaroid Maker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- Aesthetic Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Playfair+Display:wght@400;500;600&family=Reenie+Beanie&family=Montserrat:wght@300;400;500&family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #fef9f3;
+  --frame: #ffffff;
+  --text: #2a2a2a;
+  --muted: #8a715e;
+  --border: #e8dfd5;
+  --accent: #d4b896;
+  --accent-light: #f5e9da;
+}
+
+[data-theme="dark"] {
+  --bg: #1a1a1a;
+  --frame: #2a2a2a;
+  --text: #f0f0f0;
+  --muted: #b8a897;
+  --border: #3a3a3a;
+  --accent: #d4b896;
+  --accent-light: #3a3429;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg) 100%);
+  font-family: 'Montserrat', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  background: var(--frame);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.theme-toggle svg {
+  width: 22px;
+  height: 22px;
+}
+
+.sun-icon {
+  fill: #f39c12;
+}
+
+.moon-icon {
+  fill: #5a4738;
+}
+
+[data-theme="dark"] .moon-icon {
+  fill: #f39c12;
+}
+
+[data-theme="dark"] .sun-icon {
+  fill: #8a715e;
+}
+
+/* Decorative background elements */
+.bg-decoration {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(212, 184, 150, 0.05);
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .bg-circle {
+  background: rgba(212, 184, 150, 0.03);
+}
+
+.circle-1 {
+  width: 300px;
+  height: 300px;
+  top: 10%;
+  left: 5%;
+}
+
+.circle-2 {
+  width: 200px;
+  height: 200px;
+  bottom: 15%;
+  right: 10%;
+  background: rgba(245, 233, 218, 0.1);
+}
+
+[data-theme="dark"] .circle-2 {
+  background: rgba(245, 233, 218, 0.05);
+}
+
+.circle-3 {
+  width: 150px;
+  height: 150px;
+  top: 60%;
+  left: 15%;
+  background: rgba(212, 184, 150, 0.08);
+}
+
+/* Main Container */
+.main-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 40px 0 20px;
+  width: 100%;
+}
+
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px;
+  margin: 0;
+  color: var(--text);
+  letter-spacing: 0.8px;
+  position: relative;
+  display: inline-block;
+}
+
+.header h1::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 2px;
+  background: var(--accent);
+}
+
+.header .tagline {
+  font-family: 'Dancing Script', cursive;
+  font-size: 22px;
+  color: var(--muted);
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+/* Content Area */
+.content-area {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 70px;
+  width: 100%;
+  max-width: 1200px;
+  margin: auto 0;
+  padding: 20px 0;
+}
+
+/* POLAROID */
+.polaroid {
+  background: var(--frame);
+  width: 340px;
+  padding: 20px 20px 60px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  transform: rotate(-1deg);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  position: relative;
+}
+
+[data-theme="dark"] .polaroid {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.polaroid:hover {
+  transform: rotate(0deg);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.polaroid::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  border: 1px solid rgba(212, 184, 150, 0.3);
+  pointer-events: none;
+  border-radius: 2px;
+}
+
+.photo-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--accent-light);
+  overflow: hidden;
+  position: relative;
+}
+
+.photo-wrap::before {
+  content: 'Polaroid';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Reenie Beanie', cursive;
+  font-size: 28px;
+  color: rgba(122, 99, 82, 0.2);
+  z-index: 0;
+}
+
+[data-theme="dark"] .photo-wrap::before {
+  color: rgba(255, 255, 255, 0.1);
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+/* DATE SECTION */
+.date-section {
+  position: relative;
+  margin-top: 30px;
+}
+
+.caption {
+  padding-top: 10px;
+  text-align: center;
+  font-family: 'Reenie Beanie', cursive;
+  font-size: 24px;
+  color: var(--text);
+  border-top: 1px dashed var(--accent);
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 10px 8px 8px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.caption:hover {
+  background-color: rgba(245, 233, 218, 0.3);
+  border-radius: 4px;
+}
+
+[data-theme="dark"] .caption:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.caption-input {
+  display: none;
+  width: 100%;
+  border: none;
+  border-top: 1px dashed var(--accent);
+  font-family: 'Reenie Beanie', cursive;
+  font-size: 24px;
+  color: var(--text);
+  text-align: center;
+  background: transparent;
+  outline: none;
+  padding: 10px 8px 8px;
+  letter-spacing: 0.5px;
+}
+
+/* Edit indicator */
+.edit-indicator {
+  position: absolute;
+  bottom: -45px;
+  right: -15px;
+  display: flex;
+  align-items: center;
+  background: rgba(254, 249, 243, 0.95);
+  border: 1px dashed var(--accent);
+  border-radius: 18px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--muted);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  animation: pulse 2s infinite;
+}
+
+[data-theme="dark"] .edit-indicator {
+  background: rgba(42, 42, 42, 0.95);
+  color: var(--muted);
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+  50% { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); }
+  100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+}
+
+.edit-indicator::before {
+  content: '';
+  position: absolute;
+  top: -18px;
+  right: 35px;
+  width: 2px;
+  height: 18px;
+  border-right: 2px dashed var(--accent);
+}
+
+.edit-indicator::after {
+  content: '';
+  position: absolute;
+  top: -35px;
+  right: 30px;
+  width: 14px;
+  height: 14px;
+  border-top: 2px dashed var(--accent);
+  border-right: 2px dashed var(--accent);
+  transform: rotate(-45deg);
+}
+
+.edit-indicator span {
+  margin-left: 6px;
+  background: var(--accent);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+}
+
+/* CONTROLS */
+.controls {
+  width: 320px;
+}
+
+.controls h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.controls .subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  color: var(--muted);
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.upload-area {
+  background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg) 100%);
+  border: 2px dashed var(--accent);
+  color: var(--muted);
+  padding: 16px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.upload-area:hover {
+  background: linear-gradient(135deg, var(--accent-light) 0%, var(--border) 100%);
+  border-color: var(--accent);
+}
+
+.upload-area span {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.upload-area .hint {
+  font-size: 12px;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.slider-group {
+  margin-bottom: 18px;
+}
+
+.slider-group label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+}
+
+.slider-value {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 5px;
+  border-radius: 8px;
+  background: var(--border);
+  outline: none;
+  -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Date instructions */
+.date-edit-instructions {
+  margin-top: 14px;
+  padding: 8px 12px;
+  background: rgba(245, 233, 218, 0.3);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  border-left: 2px solid var(--accent);
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .date-edit-instructions {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.date-edit-instructions strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.download {
+  margin-top: 28px;
+  background: transparent;
+  border: 2px solid var(--accent);
+  color: var(--muted);
+  padding: 14px;
+  width: 100%;
+  cursor: pointer;
+  font-size: 15px;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.download:hover {
+  background: var(--accent);
+  color: var(--bg);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 15px 0;
+  width: 100%;
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+
+/* Large Tablets and Small Desktops */
+@media (max-width: 1100px) {
+  .content-area {
+    gap: 50px;
+  }
+  
+  .polaroid {
+    width: 320px;
+  }
+  
+  .controls {
+    width: 300px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 900px) {
+  .header h1 {
+    font-size: 36px;
+  }
+  
+  .header .tagline {
+    font-size: 20px;
+  }
+  
+  .content-area {
+    gap: 40px;
+  }
+  
+  .polaroid {
+    width: 300px;
+  }
+  
+  .controls {
+    width: 280px;
+  }
+  
+  .theme-toggle {
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Tablets and Landscape Phones */
+@media (max-width: 768px) {
+  .content-area {
+    flex-direction: column;
+    gap: 40px;
+    padding: 20px 0;
+  }
+  
+  .polaroid {
+    transform: rotate(0deg);
+    width: 340px;
+  }
+  
+  .controls {
+    width: 340px;
+  }
+  
+  .edit-indicator {
+    bottom: -40px;
+    right: -10px;
+  }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+  .main-wrapper {
+    padding: 15px;
+  }
+  
+  .header {
+    padding: 60px 0 15px;
+  }
+  
+  .header h1 {
+    font-size: 32px;
+  }
+  
+  .header .tagline {
+    font-size: 18px;
+  }
+  
+  .content-area {
+    gap: 35px;
+  }
+  
+  .polaroid {
+    width: 300px;
+  }
+  
+  .controls {
+    width: 300px;
+  }
+  
+  .caption {
+    font-size: 22px;
+  }
+  
+  .theme-toggle {
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+  }
+  
+  .theme-toggle svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Very Small Phones */
+@media (max-width: 360px) {
+  .header h1 {
+    font-size: 28px;
+  }
+  
+  .header .tagline {
+    font-size: 16px;
+  }
+  
+  .polaroid {
+    width: 280px;
+    padding: 16px 16px 50px;
+  }
+  
+  .controls {
+    width: 280px;
+  }
+  
+  .caption {
+    font-size: 20px;
+  }
+  
+  .edit-indicator {
+    font-size: 11px;
+    padding: 5px 10px;
+    bottom: -35px;
+  }
+}
+</style>
+</head>
+
+<body data-theme="light">
+<!-- Theme Toggle Button -->
+<div class="theme-toggle" id="themeToggle">
+  <svg class="sun-icon" style="display: none;" viewBox="0 0 24 24">
+    <path d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/>
+  </svg>
+  <svg class="moon-icon" viewBox="0 0 24 24">
+    <path d="M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36c-0.98,1.37-2.58,2.26-4.4,2.26 c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/>
+  </svg>
+</div>
+
+<!-- Decorative background elements -->
+<div class="bg-decoration">
+  <div class="bg-circle circle-1"></div>
+  <div class="bg-circle circle-2"></div>
+  <div class="bg-circle circle-3"></div>
+</div>
+
+<div class="main-wrapper">
+  <!-- Header -->
+  <div class="header">
+    <h1>Polaroid Maker</h1>
+    <div class="tagline">create your own polaroid memory</div>
+  </div>
+  
+  <!-- Content Area -->
+  <div class="content-area">
+    <!-- POLAROID -->
+    <div class="polaroid">
+      <div class="photo-wrap">
+        <canvas id="canvas" width="800" height="800"></canvas>
+      </div>
+      
+      <div class="date-section">
+        <div class="caption" id="dateText">Taken on 12·01·26</div>
+        <input type="text" class="caption-input" id="dateInput" maxlength="30" 
+               placeholder="Edit date (e.g., Summer '23)">
+        
+        <!-- Edit indicator -->
+        <div class="edit-indicator">
+          ✏️ Click to edit <span>Try it!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+      <h2>Customize Your Memory</h2>
+      <p class="subtitle">Upload a photo and adjust the vintage effects</p>
+
+      <label class="upload-area">
+        <span>Choose a Photo</span>
+        <span class="hint">Click to upload or drag & drop</span>
+        <input type="file" accept="image/*" onchange="loadImage(event)" id="fileInput">
+      </label>
+
+      <div class="slider-group">
+        <label>Grain <span class="slider-value" id="grainValue">15</span></label>
+        <input type="range" min="0" max="40" value="15" id="grain">
+      </div>
+
+      <div class="slider-group">
+        <label>Fade <span class="slider-value" id="fadeValue">0.95</span></label>
+        <input type="range" min="0.7" max="1.2" step="0.01" value="0.95" id="fade">
+      </div>
+
+      <div class="slider-group">
+        <label>Warmth <span class="slider-value" id="warmthValue">15</span></label>
+        <input type="range" min="0" max="40" value="15" id="warmth">
+      </div>
+      
+      <div class="date-edit-instructions">
+        <strong>💡 Pro Tip:</strong> Click on the date to customize it! 
+        Try dates like "Summer '23" or "Paris, April 5th"
+      </div>
+
+      <button class="download" onclick="download()">
+        Download Your Polaroid
+      </button>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <div class="footer">
+
+</div>
+
+<script>
+// Theme Toggle Functionality
+const themeToggle = document.getElementById('themeToggle');
+const body = document.body;
+const sunIcon = document.querySelector('.sun-icon');
+const moonIcon = document.querySelector('.moon-icon');
+
+// Check for saved theme preference or prefer-color-scheme
+const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+const currentTheme = localStorage.getItem('theme') || (prefersDarkScheme.matches ? 'dark' : 'light');
+
+// Set initial theme
+if (currentTheme === 'dark') {
+  body.setAttribute('data-theme', 'dark');
+  sunIcon.style.display = 'block';
+  moonIcon.style.display = 'none';
+} else {
+  body.setAttribute('data-theme', 'light');
+  sunIcon.style.display = 'none';
+  moonIcon.style.display = 'block';
+}
+
+// Toggle theme
+themeToggle.addEventListener('click', () => {
+  const currentTheme = body.getAttribute('data-theme');
+  
+  if (currentTheme === 'light') {
+    body.setAttribute('data-theme', 'dark');
+    sunIcon.style.display = 'block';
+    moonIcon.style.display = 'none';
+    localStorage.setItem('theme', 'dark');
+  } else {
+    body.setAttribute('data-theme', 'light');
+    sunIcon.style.display = 'none';
+    moonIcon.style.display = 'block';
+    localStorage.setItem('theme', 'light');
+  }
+});
+
+// Rest of the polaroid functionality
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let img = new Image();
+
+// Get DOM elements
+const dateText = document.getElementById('dateText');
+const dateInput = document.getElementById('dateInput');
+const fadeInput = document.getElementById('fade');
+const warmthInput = document.getElementById('warmth');
+const grainInput = document.getElementById('grain');
+
+// Initialize date
+function updateDate() {
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = String(now.getFullYear()).slice(-2);
+  dateText.textContent = `Taken on ${day}·${month}·${year}`;
+}
+
+// DEFAULT IMAGE
+img.crossOrigin = "anonymous";
+img.src = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&h=800&fit=crop";
+img.onload = () => {
+  render();
+  updateDate();
+};
+
+// Update slider values display
+fadeInput.addEventListener('input', function() {
+  document.getElementById('fadeValue').textContent = this.value;
+  render();
+});
+
+warmthInput.addEventListener('input', function() {
+  document.getElementById('warmthValue').textContent = this.value;
+  render();
+});
+
+grainInput.addEventListener('input', function() {
+  document.getElementById('grainValue').textContent = this.value;
+  render();
+});
+
+// Date editing functionality
+dateText.addEventListener('click', function() {
+  // Hide text, show input
+  dateText.style.display = 'none';
+  dateInput.style.display = 'block';
+  dateInput.value = dateText.textContent;
+  dateInput.focus();
+  dateInput.select();
+  
+  // Hide edit indicator when editing
+  document.querySelector('.edit-indicator').style.opacity = '0.5';
+});
+
+dateInput.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    saveDateEdit();
+  }
+});
+
+dateInput.addEventListener('blur', function() {
+  saveDateEdit();
+});
+
+function saveDateEdit() {
+  const newDate = dateInput.value.trim();
+  if (newDate) {
+    dateText.textContent = newDate;
+  }
+  
+  // Show text, hide input
+  dateText.style.display = 'block';
+  dateInput.style.display = 'none';
+  
+  // Show edit indicator again
+  document.querySelector('.edit-indicator').style.opacity = '1';
+}
+
+// Image upload
+function loadImage(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  img.src = URL.createObjectURL(file);
+  img.onload = () => {
+    render();
+    updateDate();
+  };
+}
+
+// Allow drag and drop
+const uploadArea = document.querySelector('.upload-area');
+const fileInput = document.getElementById('fileInput');
+
+uploadArea.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  uploadArea.style.borderColor = '#c9aa87';
+  uploadArea.style.background = 'linear-gradient(135deg, var(--accent-light) 0%, var(--border) 100%)';
+});
+
+uploadArea.addEventListener('dragleave', () => {
+  uploadArea.style.borderColor = '';
+  uploadArea.style.background = '';
+});
+
+uploadArea.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadArea.style.borderColor = '';
+  uploadArea.style.background = '';
+  
+  if (e.dataTransfer.files.length) {
+    fileInput.files = e.dataTransfer.files;
+    const event = new Event('change', { bubbles: true });
+    fileInput.dispatchEvent(event);
+  }
+});
+
+// Render image with effects
+function render() {
+  ctx.clearRect(0, 0, 800, 800);
+  
+  const size = Math.min(img.width, img.height);
+  const sx = (img.width - size) / 2;
+  const sy = (img.height - size) / 2;
+  
+  ctx.drawImage(img, sx, sy, size, size, 0, 0, 800, 800);
+  
+  let imageData = ctx.getImageData(0, 0, 800, 800);
+  let d = imageData.data;
+  
+  const fade = parseFloat(fadeInput.value);
+  const warmth = parseInt(warmthInput.value);
+  const grain = parseInt(grainInput.value);
+  
+  for (let i = 0; i < d.length; i += 4) {
+    // Apply fade
+    d[i] = d[i] * fade + warmth; // Red
+    d[i+1] = d[i+1] * fade + warmth / 2; // Green
+    d[i+2] = d[i+2] * fade; // Blue
+    
+    // Apply grain
+    const g = (Math.random() - 0.5) * grain;
+    d[i] = Math.min(255, Math.max(0, d[i] + g));
+    d[i+1] = Math.min(255, Math.max(0, d[i+1] + g));
+    d[i+2] = Math.min(255, Math.max(0, d[i+2] + g));
+    
+    // Add subtle vintage tint
+    d[i] = Math.min(255, d[i] * 1.05); // Slight red boost
+    d[i+2] = d[i+2] * 0.98; // Slight blue reduction
+  }
+  
+  ctx.putImageData(imageData, 0, 0);
+}
+
+// Download polaroid
+function download() {
+  const exportCanvas = document.createElement('canvas');
+  exportCanvas.width = 1024;
+  exportCanvas.height = 1224;
+  const ectx = exportCanvas.getContext('2d');
+  
+  // Background
+  ectx.fillStyle = "#ffffff";
+  ectx.fillRect(0, 0, 1024, 1224);
+  
+  // Draw the photo
+  ectx.drawImage(canvas, 62, 62, 900, 900);
+  
+  // Add date with aesthetic font
+  ectx.font = "52px 'Reenie Beanie'";
+  ectx.fillStyle = "#5a4738";
+  ectx.textAlign = "center";
+  ectx.fillText(
+    dateText.innerText,
+    512,
+    1135
+  );
+  
+  // Create download link
+  const link = document.createElement('a');
+  link.download = "polaroid-memory.png";
+  link.href = exportCanvas.toDataURL();
+  link.click();
+}
+
+// Add some example date suggestions on first click
+let firstClick = true;
+dateText.addEventListener('click', function() {
+  if (firstClick) {
+    // Show suggestions in placeholder
+    const suggestions = [
+      "Summer '23",
+      "Paris, April 5th",
+      "Best Day Ever",
+      "Family Vacation",
+      "Our Wedding Day"
+    ];
+    dateInput.placeholder = `e.g., ${suggestions[Math.floor(Math.random() * suggestions.length)]}`;
+    firstClick = false;
+  }
+});
+</script>
+</body>
+</html>
